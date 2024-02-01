@@ -1,9 +1,9 @@
 # French DSL-ML data
 
-** The French data will be made available shortly. **
+**The French data will be made available shortly.**
 
 **Sources:**
-- [FreCDo]([https://github.com/languagetechnologylab/dsl-tl](https://github.com/MihaelaGaman/FreCDo)
+- [FreCDo](https://github.com/MihaelaGaman/FreCDo)
 - [DSLCC v4.0](http://ttg.uni-saarland.de/resources/DSLCC/)
 
 **Key figures:**
