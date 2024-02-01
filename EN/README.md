@@ -1,6 +1,6 @@
 # English DSL-ML data
 
-**Source:** (DSL-TL)[https://github.com/languagetechnologylab/dsl-tl]
+**Source:** [DSL-TL](https://github.com/languagetechnologylab/dsl-tl)
 
 **Key figures:**
 - Training instances: 2097
@@ -9,4 +9,4 @@
 
 **Prohibited data:** DSL-TL
 
-**Allowed additional data:** (DSLCC v1.0)[http://ttg.uni-saarland.de/resources/DSLCC/]
+**Allowed additional data:** [DSLCC v1.0](http://ttg.uni-saarland.de/resources/DSLCC/)
