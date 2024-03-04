@@ -44,6 +44,37 @@ Participants are evaluated in two separate scenarios:
 - CLOSED: participants are not allowed to use pre-trained models or external data to train their models.
 - OPEN: participants are allowed to use external resources such as unlabeled corpora, lexicons, and pre-trained embeddings (e.g., BERT) but the use of additional labeled data is not allowed.
 
+## Test Data Format
+
+The test data contains the following files:
+
+	test.txt - contain the test samples (one example per row):
+
+	text-sample-1
+	text-sample-2
+	text-sample-3
+	...
+
+## Submission
+
+Each participant is allowed to submit 3 runs for the CLOSED task and 3 runs for the OPEN task to:
+	
+	yves.scherrer@gmail.com 
+
+Each line in the submission file MFDI-[task_type]-run-X-[team_name].txt file is in the format:
+
+	label-1
+	label-2a,label-2b
+	...
+	label-N
+
+The labels must be given in the same order as the test samples listed in test.txt. The participants must provide labels for all the test samples. Each submission (run) must be accompanied by a MFDI-readme-[task_type]-run-X-[team_name].txt file containing a one-paragraph description of the respective submission, where X is the run number (1, 2 or 3). 
+
+For example, if the team name is "Ghostbusters", the first submission to the CLOSED task should contain two files:
+	MFDI-closed-run-1-Ghostbusters.txt
+	MFDI-readme-closed-run-1-Ghostbusters.txt
+
+
 ## Evaluation
 
-The test data (to be released later) will only contain examples without their dialect labels. Participants will be required to submit the labels for these test instances. The exact details of the submission file format will be provided later.
+The macro-averaged F1 score will be used to rank the participants.
