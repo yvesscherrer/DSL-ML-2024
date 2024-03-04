@@ -1,8 +1,8 @@
 #! /usr/bin/env python3
 
 import pandas as pd
+import csv
 import sys
-import gzip
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FeatureUnion
 from sklearn.svm import LinearSVC
@@ -10,20 +10,13 @@ from sklearn.svm import LinearSVC
 
 def get_data(task, mode, split):
 	if task == "FR":
-		with open(f"../{task}/{split}.labels") as labelfile:
-			labels = [line.rstrip() for line in labelfile]
-		if split == "train":
-			with gzip.open(f"../{task}/{split}.txt.gz", mode='rt') as textfile:
-				texts = [line.rstrip() for line in textfile]
-		else:
-			with open(f"../{task}/{split}.txt") as textfile:
-				texts = [line.rstrip() for line in textfile]
-		df = pd.DataFrame({'Label': labels, 'Text': texts})
+		labels_df = pd.read_csv(f"../{task}/{split}.labels", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Label"])
+		suffix = ".gz" if split == "train" else ""
+		text_df = pd.read_csv(f"../{task}/{split}.txt{suffix}", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Text"])
+		df = pd.concat([labels_df, text_df], axis=1)
 	else:
 		df = pd.read_csv(f"../{task}/{task}_{split}.tsv", sep="\t", header=None, names=["Label", "Text"])
 	print(f"{df.shape[0]} instances loaded from {task}/{split}")
-	# print(task, mode, split)
-	# print(df.isna().any())
 	
 	if mode == "expand" and split == "train":
 		df['ExpandLabel'] = df['Label'].str.split(',')
