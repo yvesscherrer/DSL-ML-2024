@@ -17,7 +17,7 @@ where `<TASK>` is one of `BCMS, EN, ES, FR, PT` and `<MODE>` is one of `atomic, 
 The `evaluate.py` script is the official scoring script. It provides per-class F1-scores, weighted and macro-averaged F1-scores. It also provides the same scores for the subset of the evaluation set with multiple labels. Usage:
 
 ```
-python3 evaluate.py goldfile systemfile
+python3 evaluate.py systemfile goldfile
 ```
 # Baseline results
 
