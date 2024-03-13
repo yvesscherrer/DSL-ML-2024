@@ -20,10 +20,11 @@ def load_answers(goldfile, systemfile):
 		sys_df = pd.DataFrame({"Label": sys_list})
 	
 	if gold_df.shape[0] != sys_df.shape[0]:
-		print("Number of lines does not match!")
-		print("Gold length:  ", gold_df.shape[0])
-		print("System length:", sys_df.shape[0])
-		return [], [], []
+		print("  Number of lines does not match!")
+		print("  Gold length:  ", gold_df.shape[0])
+		print("  System length:", sys_df.shape[0])
+		print()
+		return None, None, None
 
 	cv = CountVectorizer(binary=True, lowercase=False, tokenizer=lambda x: x.split(","), token_pattern=None)
 	gold_array = cv.fit_transform(gold_df.Label).toarray()
@@ -42,30 +43,34 @@ def only_ambiguous_answers(gold_array, sys_array):
 if __name__ == "__main__":
 	systemfile = sys.argv[1]
 	goldfile = sys.argv[2]
-	labels, gold_answers, system_answers = load_answers(goldfile, systemfile)
+
 	print("Evaluated file:", systemfile)
-	print()
+	labels, gold_answers, system_answers = load_answers(goldfile, systemfile)
+	if labels is None:
+		sys.exit(0)
 	
 	# mcm = multilabel_confusion_matrix(gold_answers, system_answers)
 	# print(mcm)
 
-	print("Scores for entire dataset ({} instances):".format(gold_answers.shape[0]))
+	print("  Scores for entire dataset ({} instances):".format(gold_answers.shape[0]))
 	class_f1 = f1_score(gold_answers, system_answers, average=None, zero_division="warn")
 	macro_f1 = f1_score(gold_answers, system_answers, average='macro', zero_division="warn")
 	weighted_f1 = f1_score(gold_answers, system_answers, average='weighted', zero_division="warn")
 	for label, score in zip(labels, class_f1):
-		print("F1-score for class {}: {:.2f}%".format(label, 100*score))
-	print("Macro-avg F1 score:    {:.2f}%".format(100*macro_f1))
-	print("Weighted-avg F1 score: {:.2f}%".format(100*weighted_f1))
+		print("    F1-score for class {}: {:.2f}%".format(label, 100*score))
+	print("    Macro-avg F1 score:    {:.2f}%".format(100*macro_f1))
+	print("    Weighted-avg F1 score: {:.2f}%".format(100*weighted_f1))
 	print()
 
 	amb_gold_answers, amb_system_answers = only_ambiguous_answers(gold_answers, system_answers)
-	print("Scores for ambiguous subset ({} instances):".format(amb_gold_answers.shape[0]))
+	print("  Scores for ambiguous subset ({} instances):".format(amb_gold_answers.shape[0]))
 	class_f1 = f1_score(amb_gold_answers, amb_system_answers, average=None, zero_division="warn")
 	macro_f1 = f1_score(amb_gold_answers, amb_system_answers, average='macro', zero_division="warn")
 	weighted_f1 = f1_score(amb_gold_answers, amb_system_answers, average='weighted', zero_division="warn")
+	acc = accuracy_score(amb_gold_answers, amb_system_answers)
 	for label, score in zip(labels, class_f1):
-		print("F1-score for class {}: {:.2f}%".format(label, 100*score))
-	print("Macro-avg F1 score:    {:.2f}%".format(100*macro_f1))
-	print("Weighted-avg F1 score: {:.2f}%".format(100*weighted_f1))
+		print("    F1-score for class {}: {:.2f}%".format(label, 100*score))
+	print("    Macro-avg F1 score:    {:.2f}%".format(100*macro_f1))
+	print("    Weighted-avg F1 score: {:.2f}%".format(100*weighted_f1))
+	print("    Exact match (accuracy): {:.2f}%".format(100*acc))
 	print()
