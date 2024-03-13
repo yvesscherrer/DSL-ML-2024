@@ -9,15 +9,19 @@ from sklearn.svm import LinearSVC
 
 
 def get_data(task, mode, split):
-	if task == "FR":
-		labels_df = pd.read_csv(f"../{task}/{split}.labels", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Label"])
-		suffix = ".gz" if split == "train" else ""
-		text_df = pd.read_csv(f"../{task}/{split}.txt{suffix}", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Text"])
-		df = pd.concat([labels_df, text_df], axis=1)
+	if split == "test":
+		suffix = "txt" if task == "FR" else "tsv"
+		df = pd.read_csv(f"../{task}/{task}_{split}.{suffix}", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Text"])
 	else:
-		df = pd.read_csv(f"../{task}/{task}_{split}.tsv", sep="\t", header=None, names=["Label", "Text"])
+		if task == "FR":
+			labels_df = pd.read_csv(f"../{task}/{split}.labels", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Label"])
+			suffix = ".gz" if split == "train" else ""
+			text_df = pd.read_csv(f"../{task}/{split}.txt{suffix}", sep="\t", header=None, quoting=csv.QUOTE_NONE, names=["Text"])
+			df = pd.concat([labels_df, text_df], axis=1)
+		else:
+			df = pd.read_csv(f"../{task}/{task}_{split}.tsv", sep="\t", header=None, names=["Label", "Text"])
 	print(f"{df.shape[0]} instances loaded from {task}/{split}")
-	
+
 	if mode == "expand" and split == "train":
 		df['ExpandLabel'] = df['Label'].str.split(',')
 		df = df.explode('ExpandLabel')
@@ -62,10 +66,15 @@ if __name__ == "__main__":
 	assert(task in ["BCMS", "EN", "ES", "FR", "PT"])
 	mode = sys.argv[2]
 	assert(mode in ["atomic", "expand"])
-	print(task, mode)
-	
+	if len(sys.argv) > 3:
+		split = sys.argv[3]
+	else:
+		split = "dev"
+	assert(split in ["dev", "test"])
+	print(task, mode, split)
+
 	training_data = get_data(task, mode, 'train')
-	dev_data = get_data(task, mode, 'dev')
+	test_data = get_data(task, mode, split)
 	vec, svm = train(training_data)
-	dev_out = predict(dev_data, vec, svm)
-	save_results(dev_out, f"{task}.{mode}.dev.out")
+	test_out = predict(test_data, vec, svm)
+	save_results(test_out, f"{task}.{mode}.{split}.out")
